@@ -22,18 +22,19 @@ import android.view.ViewGroup;
 import com.jakewharton.rxrelay2.BehaviorRelay;
 import com.jakewharton.rxrelay2.PublishRelay;
 import com.jakewharton.rxrelay2.Relay;
-import com.uber.autodispose.LifecycleEndedException;
-import com.uber.autodispose.LifecycleScopeProvider;
 import com.uber.rib.core.lifecycle.ActivityCallbackEvent;
 import com.uber.rib.core.lifecycle.ActivityLifecycleEvent;
+import android.support.v7.app.AppCompatActivity;
+
+import java.io.IOException;
+
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
-import android.support.v7.app.AppCompatActivity;
 
 /** Base implementation for all VIP {@link android.app.Activity}s. */
 public abstract class RibActivity extends AppCompatActivity
-    implements ActivityStarter, LifecycleScopeProvider<ActivityLifecycleEvent>, RxActivityEvents {
+    implements ActivityStarter, RxActivityEvents {
 
   /**
    * Figures out which corresponding next lifecycle event in which to unsubscribe, for Activities.
@@ -54,7 +55,7 @@ public abstract class RibActivity extends AppCompatActivity
             case STOP:
               return ActivityLifecycleEvent.create(ActivityLifecycleEvent.Type.DESTROY);
             case DESTROY:
-              throw new LifecycleEndedException(
+              throw new UnsupportedOperationException(
                   "Cannot bind to Activity lifecycle when outside of it.");
           }
           throw new UnsupportedOperationException(
@@ -118,13 +119,7 @@ public abstract class RibActivity extends AppCompatActivity
         .cast(clazz);
   }
 
-  @Override
-  public Function<ActivityLifecycleEvent, ActivityLifecycleEvent> correspondingEvents() {
-    return ACTIVITY_LIFECYCLE;
-  }
-
   @Nullable
-  @Override
   public ActivityLifecycleEvent peekLifecycle() {
     return lifecycleBehaviorRelay.getValue();
   }

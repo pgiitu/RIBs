@@ -15,14 +15,13 @@
  */
 package com.uber.rib.core;
 
-import com.uber.autodispose.ScopeProvider;
 import com.uber.rib.core.lifecycle.WorkerEvent;
 
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 
 /** {@link ScopeProvider} for {@link Worker} instances. */
-public class WorkerScopeProvider implements ScopeProvider {
+public class WorkerScopeProvider {
 
   private final Observable<WorkerEvent> workerLifecycleObservable;
 
@@ -30,8 +29,4 @@ public class WorkerScopeProvider implements ScopeProvider {
     this.workerLifecycleObservable = workerLifecycleObservable;
   }
 
-  @Override
-  public Maybe<?> requestScope() {
-    return workerLifecycleObservable.skip(1).firstElement();
-  }
 }

@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
 
-import com.uber.autodispose.SingleScoper;
 import com.uber.rave.Rave;
 import com.uber.rave.RaveException;
 import com.uber.rib.core.Optional;
@@ -67,7 +66,6 @@ public class RootActivity extends RibActivity {
 
         rootWorkflow
             .createSingle(rootInteractor)
-            .to(new SingleScoper<Optional<?>>(this))
             .subscribe(
                 new Consumer<Optional<?>>() {
                   @Override

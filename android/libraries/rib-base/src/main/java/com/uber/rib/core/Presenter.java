@@ -19,10 +19,8 @@ import android.support.annotation.CallSuper;
 
 import com.jakewharton.rxrelay2.BehaviorRelay;
 import com.jakewharton.rxrelay2.Relay;
-import com.uber.autodispose.ScopeProvider;
 import com.uber.rib.core.lifecycle.PresenterEvent;
 
-import io.reactivex.Maybe;
 import io.reactivex.Observable;
 
 import static com.uber.rib.core.lifecycle.PresenterEvent.LOADED;
@@ -33,7 +31,7 @@ import static com.uber.rib.core.lifecycle.PresenterEvent.UNLOADED;
  * transformations and believed these transformations would be complex enough to require its own
  * lifecycle. In practice this caused confusion: if both a presenter and interactor can perform
  * complex rx logic it becomes unclear where you should write your bussiness logic. */
-public abstract class Presenter implements ScopeProvider {
+public abstract class Presenter {
 
   private final BehaviorRelay<PresenterEvent> behaviorRelay = BehaviorRelay.create();
   private final Relay<PresenterEvent> lifecycleRelay = behaviorRelay.toSerialized();
@@ -75,8 +73,4 @@ public abstract class Presenter implements ScopeProvider {
     return lifecycleRelay.hide();
   }
 
-  @Override
-  public Maybe<?> requestScope() {
-    return lifecycleRelay.skip(1).firstElement();
-  }
 }

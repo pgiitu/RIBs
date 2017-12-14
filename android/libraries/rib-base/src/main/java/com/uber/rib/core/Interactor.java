@@ -21,14 +21,11 @@ import android.support.annotation.VisibleForTesting;
 
 import com.jakewharton.rxrelay2.BehaviorRelay;
 import com.jakewharton.rxrelay2.Relay;
-import com.uber.autodispose.LifecycleEndedException;
-import com.uber.autodispose.LifecycleScopeProvider;
 import com.uber.rib.core.lifecycle.InteractorEvent;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 
 import static com.uber.rib.core.lifecycle.InteractorEvent.ACTIVE;
 import static com.uber.rib.core.lifecycle.InteractorEvent.INACTIVE;
@@ -39,21 +36,7 @@ import static com.uber.rib.core.lifecycle.InteractorEvent.INACTIVE;
  * @param <P> the type of {@link Presenter}.
  * @param <R> the type of {@link Router}.
  */
-public abstract class Interactor<P, R extends Router>
-    implements LifecycleScopeProvider<InteractorEvent> {
-
-  private static final Function<InteractorEvent, InteractorEvent> LIFECYCLE_MAP_FUNCTION =
-      new Function<InteractorEvent, InteractorEvent>() {
-        @Override
-        public InteractorEvent apply(InteractorEvent interactorEvent) {
-          switch (interactorEvent) {
-            case ACTIVE:
-              return INACTIVE;
-            default:
-              throw new LifecycleEndedException();
-          }
-        }
-      };
+public abstract class Interactor<P, R extends Router> {
 
   @Inject P presenter;
 
@@ -71,7 +54,6 @@ public abstract class Interactor<P, R extends Router>
   }
 
   /** @return an observable of this controller's lifecycle events. */
-  @Override
   public Observable<InteractorEvent> lifecycle() {
     return lifecycleRelay.hide();
   }
@@ -150,15 +132,5 @@ public abstract class Interactor<P, R extends Router>
       throw new IllegalStateException("Attempting to get interactor's presenter before being set.");
     }
     return presenter;
-  }
-
-  @Override
-  public Function<InteractorEvent, InteractorEvent> correspondingEvents() {
-    return LIFECYCLE_MAP_FUNCTION;
-  }
-
-  @Override
-  public InteractorEvent peekLifecycle() {
-    return behaviorRelay.getValue();
   }
 }
